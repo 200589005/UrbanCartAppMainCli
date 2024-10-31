@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCdj90aG15qCpH986c9UO8-V1iNA5yEQRE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>250676528647</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.UrbanCartAppMainCli</string>
+	<key>PROJECT_ID</key>
+	<string>urbanapp-2cd62</string>
+	<key>STORAGE_BUCKET</key>
+	<string>urbanapp-2cd62.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:250676528647:ios:ae2267ffb92615a1f14ca2</string>
+</dict>
+</plist>
