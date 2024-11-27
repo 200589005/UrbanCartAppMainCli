@@ -14,8 +14,8 @@ import { login } from '../../../utils/firbase';
 const SignIn =  () => {
   // const router = useRouter();
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('mitulyaar92@gmail.com');
+  const [password, setPassword] = useState('12345678');
 
   const handleLogin = async() => {
     // Implement your login logic here

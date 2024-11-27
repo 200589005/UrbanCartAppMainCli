@@ -50,8 +50,8 @@ const CartScreen = () => {
           <View style={styles.product}>
             <Image source={{ uri: item.image }} style={styles.productImage} />
             <View style={styles.productInfo}>
-              <Text style={styles.productTitle}>{item.description}</Text>
-              <Text style={styles.productPrice}>{item.title}</Text>
+              <Text style={styles.productTitle}>{item.title}</Text>
+              <Text style={styles.productPrice}>{item.description}</Text>
               <View style={styles.productDetails}>
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity onPress={() => handleDecrement(item)}>

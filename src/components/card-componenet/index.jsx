@@ -8,9 +8,9 @@ const CardComponent = ({ item, addToCart }) => {
     <View style={styles.cardContainer}>
       <Card style={styles.card}>
         <Card.Cover source={{ uri: item.image }} />
-        <Card.Title title={item.title} />
+        <Card.Title title={item.description} />
         <Card.Content>
-          <Text style={styles.description}>{item.description}</Text>
+          <Text style={styles.description}>{item.title}</Text>
           <Button title="Add to Cart" onPress={() => addToCart(item)} />
         </Card.Content>
       </Card>

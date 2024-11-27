@@ -48,6 +48,7 @@ export const login = async (email: string, password: string) => {
         console.log('Logged in user:', user);
         const idToken = await user.getIdToken();
         await saveToken(idToken);
+        console.log('Token saved:', idToken);
         return {
             status: true,
             message: `'Logged in user:'${email}}`,
