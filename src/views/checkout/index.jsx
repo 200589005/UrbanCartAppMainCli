@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import { useDispatch } from 'react-redux';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { clearCart } from '../../redux/slices/cartSlice';
+import ApiService from '../../utils/apiservice';
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const cartItems = useSelector((state) => state.cart.items);
 
   const [streetAddress, setStreetAddress] = useState('');
   const [city, setCity] = useState('');
@@ -14,22 +24,13 @@ const CheckoutScreen = () => {
   const [postalCode, setPostalCode] = useState('');
 
   const formatPostalCode = (code) => {
-    // Remove non-alphanumeric characters
     const cleaned = code.replace(/[^A-Za-z0-9]/g, '');
-
-    // If the cleaned code is less than 3 characters, return it as is
-    if (cleaned.length <= 3) {
-      return cleaned;
-    }
-
-    // Format the cleaned code by inserting a space after the third character
+    if (cleaned.length <= 3) return cleaned;
     return cleaned.slice(0, 3) + ' ' + cleaned.slice(3, 6);
   };
 
   const handlePostalCodeChange = (code) => {
-    const codeTemp = formatPostalCode(code);
-    console.log('Postal Code: ',codeTemp);
-    setPostalCode(codeTemp);
+    setPostalCode(formatPostalCode(code));
   };
 
   const validatePostalCode = (code) => {
@@ -49,10 +50,37 @@ const CheckoutScreen = () => {
     return true;
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (validateFields()) {
-      dispatch(clearCart());
-      navigation.replace('Success');
+      const orderDetails = {
+        address: {
+          streetAddress,
+          city,
+          province,
+          postalcode: postalCode,
+        },
+        productItems: cartItems.map((item) => ({
+          title: item.title,
+          count: item.quantity,
+          description: item.description,
+          image: item.image,
+        })),
+      };
+
+      try {
+        const response = await ApiService.orderItems(orderDetails);
+
+        if (response.success) {
+          Alert.alert('Order Successful', 'Your order has been placed!');
+          dispatch(clearCart());
+          navigation.replace('Success'); // Navigate to success screen
+        } else {
+          Alert.alert('Order Failed', 'Something went wrong. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error placing order:', error);
+        Alert.alert('Order Failed', 'An error occurred. Please try again later.');
+      }
     }
   };
 
