@@ -25,7 +25,8 @@ const CartScreen = () => {
 
   const clearCartItems = () => {
     dispatch(clearCart());
-    navigation.replace('Home');
+    navigation.navigate('Home')
+    // navigation.replace('home');
   };
 
   const handleCheckout = () => {
