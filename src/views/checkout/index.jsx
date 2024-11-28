@@ -64,6 +64,7 @@ const CheckoutScreen = () => {
           count: item.quantity,
           description: item.description,
           image: item.image,
+          price: item.price,
         })),
       };
 

@@ -51,7 +51,7 @@ const MyOrderScreen = () => {
 
   const calculateOrderTotal = (products) => {
     return products.reduce((total, item) => {
-      const price = parseFloat(item.description.match(/\$(\d+\.?\d*)/)[1]);
+      const price = parseFloat(item.price);
       return total + price * item.count;
     }, 0).toFixed(2);
   };
