@@ -123,7 +123,7 @@ const HomePage = () => {
       <View style={styles.header}>
         <Text style={styles.title}>UrbanCart</Text>
         <View style={styles.icons}>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <Icon name="person" size={30} color="black" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Cart')}>

@@ -10,12 +10,14 @@ import {
   Alert,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 const ProfileScreen = () => {
   const [fullName, setFullName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation(); // Access the navigation object
 
   useEffect(() => {
     getUserDetails();
@@ -55,7 +57,9 @@ const ProfileScreen = () => {
           displayName: fullName,
         });
 
+        // Navigate to the Home screen after successfully updating the profile
         Alert.alert('Success', 'Profile updated successfully');
+        navigation.navigate('Home'); // Navigate to Home screen
       } else {
         Alert.alert('Error', 'User is not logged in');
       }

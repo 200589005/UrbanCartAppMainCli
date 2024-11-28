@@ -1,5 +1,5 @@
-import React from 'react';
-import { Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, ActivityIndicator, View } from 'react-native';
 import './gesture-handler';
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
@@ -20,6 +20,7 @@ import SettingsScreen from './src/views/main/settings/index';
 import CheckoutScreen from './src/views/checkout/index';
 import CheckoutSuccessScreen from './src/views/checkout/success';
 import { logout } from './src/utils/firbase';
+import auth, { FirebaseAuthTypes }from '@react-native-firebase/auth';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -27,7 +28,7 @@ const Drawer = createDrawerNavigator();
 // Stack for Authentication (Login, Signup, Forgot Password)
 function AuthStack() {
   return (
-    <Stack.Navigator initialRouteName="Login" >
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ headerShown: false }} />
@@ -39,7 +40,6 @@ function AuthStack() {
 function CustomDrawerContent(props: any) {
   const { navigation } = props;
 
-  // Logout function with confirmation
   const handleLogout = () => {
     Alert.alert(
       'Logout',
@@ -51,7 +51,6 @@ function CustomDrawerContent(props: any) {
           style: 'destructive',
           onPress: async () => {
             await logout();
-            // Add your logout logic here, e.g. clearing AsyncStorage or Redux store
             navigation.replace('Auth'); // Redirect to Login screen
           },
         },
@@ -61,33 +60,15 @@ function CustomDrawerContent(props: any) {
 
   return (
     <DrawerContentScrollView {...props}>
-      {/* Default drawer items */}
-      <DrawerItem
-        label="Home"
-        onPress={() => navigation.navigate('Home')}
-      />
-      <DrawerItem
-        label="Cart"
-        onPress={() => navigation.navigate('Cart')}
-      />
-      <DrawerItem
-        label="Profile"
-        onPress={() => navigation.navigate('Profile')}
-      />
-      <DrawerItem
-        label="My Orders"
-        onPress={() => navigation.navigate('My Orders')}
-      />
-      <DrawerItem
-        label="Settings"
-        onPress={() => navigation.navigate('Settings')}
-      />
-
-      {/* Add a Logout button */}
+      <DrawerItem label="Home" onPress={() => navigation.navigate('Home')} />
+      <DrawerItem label="Cart" onPress={() => navigation.navigate('Cart')} />
+      <DrawerItem label="Profile" onPress={() => navigation.navigate('Profile')} />
+      <DrawerItem label="My Orders" onPress={() => navigation.navigate('My Orders')} />
+      <DrawerItem label="Settings" onPress={() => navigation.navigate('Settings')} />
       <DrawerItem
         label="Logout"
         onPress={handleLogout}
-        style={{ marginTop: 'auto' }} // Move the button to the bottom
+        style={{ marginTop: 'auto' }}
       />
     </DrawerContentScrollView>
   );
@@ -96,7 +77,10 @@ function CustomDrawerContent(props: any) {
 // Drawer Navigation for the main app
 function AppDrawer() {
   return (
-    <Drawer.Navigator initialRouteName="Home" drawerContent={(props) => <CustomDrawerContent {...props} />}>
+    <Drawer.Navigator
+      initialRouteName="Home"
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
       <Drawer.Screen name="Home" component={HomeScreen} />
       <Drawer.Screen name="Cart" component={CartScreen} />
       <Drawer.Screen name="Profile" component={ProfileScreen} />
@@ -106,23 +90,46 @@ function AppDrawer() {
   );
 }
 
-// Main App Component
 export default function App() {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null); // Explicit type
+
+
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged((user) => {
+      // Firebase returns null if no user is logged in
+      setUser(user);
+      setInitializing(false);
+    });
+    return subscriber; // Unsubscribe when the component unmounts
+  }, []);
+
+  if (initializing) {
+    // Show a loading indicator while checking auth state
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#007bff" />
+      </View>
+    );
+  }
+
   return (
     <Provider store={store}>
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Splash">
-                <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={user ? 'AppDrawer' : 'Auth'}>
+          {/* Splash Screen */}
+          <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
 
-                {/* Authentication Stack */}
-                <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
+          {/* Authentication Stack */}
+          <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
 
-                {/* Drawer Navigation */}
-                <Stack.Screen name="AppDrawer" component={AppDrawer} options={{ headerShown: false }} />
-                <Stack.Screen name="Checkout" component={CheckoutScreen}  />
-                <Stack.Screen name="Success" component={CheckoutSuccessScreen} options={{ headerShown: false }} />
-            </Stack.Navigator>
-        </NavigationContainer>
+          {/* Drawer Navigation */}
+          <Stack.Screen name="AppDrawer" component={AppDrawer} options={{ headerShown: false }} />
+          <Stack.Screen name="Checkout" component={CheckoutScreen} />
+          <Stack.Screen name="Success" component={CheckoutSuccessScreen} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </Provider>
   );
 }
