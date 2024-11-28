@@ -16,7 +16,6 @@ import { signup } from '../../../utils/firbase';
 const SignUp = () => {
   const navigation = useNavigation();
   const [fullName, setFullName] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,10 +26,10 @@ const SignUp = () => {
   };
 
   const handleSignUp = async () => {
-    // if (!fullName || !mobileNumber || !email || !password || !confirmPassword) {
-    //   Alert.alert('Error', 'All fields are required');
-    //   return;
-    // }
+    if (!fullName || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
 
     if (!validateEmail(email)) {
       Alert.alert('Error', 'Please enter a valid email address');
@@ -46,17 +45,16 @@ const SignUp = () => {
       Alert.alert('Error', 'Password should be at least 6 characters long');
       return;
     }
-    const res = await signup(email, password);
-    if(!res.status) {
-      Alert.alert('Error',res.message);
+
+    const res = await signup(email, password, fullName);
+    if (!res.status) {
+      Alert.alert('Error', res.message);
     } else {
       navigation.replace('Auth');
     }
-
   };
 
   const handleSignIn = () => {
-    // router.push("/");
     navigation.navigate('Login');
   };
 
@@ -70,21 +68,13 @@ const SignUp = () => {
           />
         </View>
         <View style={styles.inputContainer}>
-          {/* <TextInput
+          <TextInput
             style={styles.input}
             placeholder="Full Name"
             placeholderTextColor="#ccc"
             value={fullName}
             onChangeText={setFullName}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Mobile Number"
-            placeholderTextColor="#ccc"
-            value={mobileNumber}
-            onChangeText={setMobileNumber}
-            keyboardType="phone-pad"
-          /> */}
           <TextInput
             style={styles.input}
             placeholder="Email"

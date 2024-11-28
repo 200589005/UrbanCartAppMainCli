@@ -2,20 +2,32 @@ import auth from '@react-native-firebase/auth';
 import { clearToken, getToken, saveToken } from './token';
 
 
-export const signup = async (email: string, password: string) => {
+export const signup = async (email: string, password: string, displayName: string, phoneNumber: string) => {
     try {
-        console.log(email,password);
+        console.log(email, password, displayName);
         return await new Promise((resolve) => {
             auth()
                 .createUserWithEmailAndPassword(email, password)
-                .then(() => {
-                    console.log('User account created & signed in!');
-                    resolve({
-                        status: true,
-                        message: 'User account created & signed in!',
-                    });
+                .then(async (userCredential) => {
+                    const { user } = userCredential;
+
+                    // Update display name after account creation
+                    if (user) {
+                        await user.updateProfile({
+                            displayName,
+                        });
+
+                        console.log('User account created & signed in with display name!');
+                        resolve({
+                            status: true,
+                            message: 'User account created & signed in!',
+                        });
+
+                        // Log phone number to console (or save to database if needed)
+                        // console.log('Phone number:', phoneNumber);
+                    }
                 })
-                .catch(error => {
+                .catch((error) => {
                     let errorMessage = '';
                     if (error.code === 'auth/email-already-in-use') {
                         errorMessage = 'That email address is already in use!';
@@ -29,15 +41,12 @@ export const signup = async (email: string, password: string) => {
                     });
                 });
         });
-
-
-
     } catch (error: any) {
-      let errorMessage = '';
-      return {
-        status: false,
-        message: errorMessage,
-      };
+        console.error('Error during signup:', error);
+        return {
+            status: false,
+            message: 'An unexpected error occurred during signup.',
+        };
     }
 };
 
