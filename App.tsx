@@ -95,15 +95,49 @@ export default function App() {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null); // Explicit type
 
 
-
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged((user) => {
-      // Firebase returns null if no user is logged in
+    const subscriber = auth().onAuthStateChanged(async (user) => {
       setUser(user);
+      if (user) {
+        try {
+          // Get the token
+          const token = await user.getIdToken(true);
+          console.log('Firebase ID Token:', token);
+          
+          // Get the decoded token result
+          // const decodedToken = await user.getIdTokenResult();
+          // console.log('Decoded Token Claims:', decodedToken.claims);
+          
+          // // Log user details
+          // console.log('User UID:', user.uid);
+          // console.log('User Email:', user.email);
+          // console.log('User Phone:', user.phoneNumber);
+          // console.log('User Display Name:', user.displayName);
+        } catch (error) {
+          console.error('Error getting token:', error);
+        }
+      }
       setInitializing(false);
     });
-    return subscriber; // Unsubscribe when the component unmounts
+    return subscriber;
   }, []);
+
+  // Optional: Refresh token periodically
+  useEffect(() => {
+    if (user) {
+      const tokenRefreshInterval = setInterval(async () => {
+        try {
+          const newToken = await user.getIdToken(true);
+          console.log('Refreshed Token:', newToken);
+        } catch (error) {
+          console.error('Error refreshing token:', error);
+        }
+      }, 3600000); // Refresh every hour
+
+      return () => clearInterval(tokenRefreshInterval);
+    }
+  }, [user]);
+
 
   if (initializing) {
     // Show a loading indicator while checking auth state
@@ -113,6 +147,9 @@ export default function App() {
       </View>
     );
   }
+  const idToken = user?.getIdToken();
+  console.log('user: ', user);
+  console.log('idToken: ', idToken);
 
   return (
     <Provider store={store}>
