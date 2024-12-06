@@ -1,9 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 const AboutUs = () => {
+  const route = useRoute();
   const navigation = useNavigation();
+
+  const { title, content } = route.params;
 
   return (
     <View style={styles.container}>
@@ -12,16 +15,17 @@ const AboutUs = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>About Us</Text>
+        <Text style={styles.headerTitle}>{title}</Text>
       </View> */}
 
       {/* Content */}
-      <View style={styles.content}>
-        <Text style={styles.text}>Hello</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.text}>{content}</Text>
+      </ScrollView>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -47,14 +51,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 20,
   },
   text: {
-    fontSize: 24,
-    color: '#4c669f',
+    fontSize: 16,
+    color: '#333',
+    lineHeight: 24,
   },
 });
+
 
 export default AboutUs;
