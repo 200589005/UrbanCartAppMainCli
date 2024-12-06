@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ActivityIndicator, View } from 'react-native';
+import {Text, Alert, ActivityIndicator, View,  StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import './gesture-handler';
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
@@ -21,6 +21,8 @@ import CheckoutScreen from './src/views/checkout/index';
 import CheckoutSuccessScreen from './src/views/checkout/success';
 import { logout } from './src/utils/firbase';
 import auth, { FirebaseAuthTypes }from '@react-native-firebase/auth';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // or any other icon library
+import AboutUs from './src/views/main/settings/aboutus';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -38,8 +40,9 @@ function AuthStack() {
 
 // Custom Drawer Component
 function CustomDrawerContent(props: any) {
-  const { navigation } = props;
 
+  const { navigation} = props;
+  console.log(JSON.stringify(props));
   const handleLogout = () => {
     Alert.alert(
       'Logout',
@@ -85,10 +88,83 @@ function AppDrawer() {
       <Drawer.Screen name="Cart" component={CartScreen} />
       <Drawer.Screen name="Profile" component={ProfileScreen} />
       <Drawer.Screen name="My Orders" component={MyOrderScreen} />
-      <Drawer.Screen name="Settings" component={SettingsScreen} />
+      <Drawer.Screen name="Settings" component={SettingScreen}  options={{ headerShown: false }}  />
     </Drawer.Navigator>
   );
 }
+
+
+const CustomDrawerHeader = ({ title, navigation }: {title: string; navigation: any}) => {
+  return (
+    <SafeAreaView style={{backgroundColor: '#fff'}}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          <Icon name="menu" size={24} color="#488CF7" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{title}</Text>
+      </View>
+    </SafeAreaView>
+
+  );
+};
+const SettingsStack = createStackNavigator();
+const SettingScreen = () => {
+  return (
+    <SettingsStack.Navigator >
+      {/* Main Settings Screen */}
+      <SettingsStack.Screen
+        name="MainSettings"
+        component={SettingsScreen}
+        options={({ navigation }) => ({
+          header: () => <CustomDrawerHeader title="Settings" navigation={navigation} />,
+        })}
+      />
+
+      {/* About Us Child Screen */}
+      <SettingsStack.Screen
+        name="AboutUs"
+        component={AboutUs}
+        options={({ navigation }) => ({
+          // headerTitle: 'Checkout',
+          headerBackTitle: 'Back',
+          headerLeft: () => (
+            <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+              <Icon name="arrow-back-ios" size={24} color="#488CF7" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+
+      <SettingsStack.Screen
+        name="Terms&Conditions"
+        component={AboutUs}
+        options={({ navigation }) => ({
+          headerTitle: 'Terms & Conditions',
+          headerBackTitle: 'Back',
+          headerLeft: () => (
+            <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+              <Icon name="arrow-back-ios" size={24} color="#488CF7" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <SettingsStack.Screen
+        name="PrivacyPolicy"
+        component={AboutUs}
+        options={({ navigation }) => ({
+          headerTitle: 'PrivacyPolicy',
+          headerBackTitle: 'Back',
+          headerLeft: () => (
+            <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+              <Icon name="arrow-back-ios" size={24} color="#488CF7" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+
+    </SettingsStack.Navigator>
+  );
+};
 
 export default function App() {
   const [initializing, setInitializing] = useState(true);
@@ -103,11 +179,11 @@ export default function App() {
           // Get the token
           const token = await user.getIdToken(true);
           console.log('Firebase ID Token:', token);
-          
+
           // Get the decoded token result
           // const decodedToken = await user.getIdTokenResult();
           // console.log('Decoded Token Claims:', decodedToken.claims);
-          
+
           // // Log user details
           // console.log('User UID:', user.uid);
           // console.log('User Email:', user.email);
@@ -163,10 +239,54 @@ export default function App() {
 
           {/* Drawer Navigation */}
           <Stack.Screen name="AppDrawer" component={AppDrawer} options={{ headerShown: false }} />
-          <Stack.Screen name="Checkout" component={CheckoutScreen} />
+          <Stack.Screen name="Checkout" component={CheckoutScreen}
+            options={({ navigation }) => ({
+              headerTitle: 'Checkout',
+              headerBackTitle: 'Back',
+              headerLeft: () => (
+                <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+                  <Icon name="arrow-back-ios" size={24} color="#488CF7" />
+                </TouchableOpacity>
+              ),
+            })}
+          />
           <Stack.Screen name="Success" component={CheckoutSuccessScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    padding: 16,
+  },
+  button: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    height: 45,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  heder_button: {
+    padding: 8,
+  },
+});
+

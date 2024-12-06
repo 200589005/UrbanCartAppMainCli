@@ -25,13 +25,14 @@ const CartScreen = () => {
 
   const clearCartItems = () => {
     dispatch(clearCart());
-    navigation.navigate('Home')
+    navigation.navigate('Home');
     // navigation.replace('home');
   };
 
   const handleCheckout = () => {
     if (cartItems.length > 0) {
-      navigation.replace('Checkout');
+      // navigation.replace('Checkout');
+      navigation.navigate('Checkout');
     } else {
       Alert.alert('Your cart is empty', 'Please add items to your cart before proceeding to checkout.');
     }

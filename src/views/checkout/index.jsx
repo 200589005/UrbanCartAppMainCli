@@ -11,10 +11,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { clearCart } from '../../redux/slices/cartSlice';
 import ApiService from '../../utils/apiservice';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const onBackPress = () => {
+  //       navigation.navigate('AppDrawer', { screen: 'Cart' });
+  //       return true; // Prevent default behavior
+  //     };
+
+  //     const subscription = navigation.addListener('beforeRemove', onBackPress);
+  //     return () => subscription(); // Cleanup
+  //   }, [navigation])
+  // );
+
 
   const cartItems = useSelector((state) => state.cart.items);
 
@@ -25,7 +39,7 @@ const CheckoutScreen = () => {
 
   const formatPostalCode = (code) => {
     const cleaned = code.replace(/[^A-Za-z0-9]/g, '');
-    if (cleaned.length <= 3) return cleaned;
+    if (cleaned.length <= 3) {return cleaned;}
     return cleaned.slice(0, 3) + ' ' + cleaned.slice(3, 6);
   };
 

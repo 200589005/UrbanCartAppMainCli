@@ -14,7 +14,7 @@ const SettingsScreen = ({ navigation }) => {
           <Icon name="info" size={24} color="#4c669f" style={styles.icon} />
           <Text style={styles.optionText}>About Us</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => handleNavigation('TermsAndConditions')}>
+        <TouchableOpacity style={styles.option} onPress={() => handleNavigation('Terms&Conditions')}>
           <Icon name="book" size={24} color="#4c669f" style={styles.icon} />
           <Text style={styles.optionText}>Terms & Conditions</Text>
         </TouchableOpacity>
